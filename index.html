@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <link rel="icon" type="image/svg+xml" href="assests/Bottle.png">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="description" content="Bottlr Studios - Custom branded water bottles for hotels, restaurants, and events">
+      <title>Bottlr Studios - Pure Bottled Perfection</title>
+      <script type="module" crossorigin src="assests/main.js"></script>
+      <link rel="stylesheet" href="assests/style.css">
+
+      <script type="module">
+        window.onerror = (message, source, lineno, colno, errorObj) => {
+          const errorDetails = errorObj ? JSON.stringify({
+            name: errorObj.name,
+            message: errorObj.message,
+            stack: errorObj.stack,
+            source,
+            lineno,
+            colno,
+          }) : null;
+          
+          window.parent.postMessage({
+            type: 'horizons-runtime-error',
+            message,
+            error: errorDetails
+          }, '*');
+        };
+        </script>
+        <script type="module">
+          const observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+              for (const addedNode of mutation.addedNodes) {
+                if (
+                  addedNode.nodeType === Node.ELEMENT_NODE &&
+                  (
+                    addedNode.tagName?.toLowerCase() === 'vite-error-overlay' ||
+                    addedNode.classList?.contains('backdrop')
+                  )
+                ) {
+                  handleViteOverlay(addedNode);
+                }
+              }
+            }
+          });
+          
+          observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true
+          });
+          
+          function handleViteOverlay(node) {
+            if (!node.shadowRoot) {
+              return;
+            }
+          
+            const backdrop = node.shadowRoot.querySelector('.backdrop');
+          
+            if (backdrop) {
+              const overlayHtml = backdrop.outerHTML;
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(overlayHtml, 'text/html');
+              const messageBodyElement = doc.querySelector('.message-body');
+              const fileElement = doc.querySelector('.file');
+              const messageText = messageBodyElement ? messageBodyElement.textContent.trim() : '';
+              const fileText = fileElement ? fileElement.textContent.trim() : '';
+              const error = messageText + (fileText ? ' File:' + fileText : '');
+          
+              window.parent.postMessage({
+                type: 'horizons-vite-error',
+                error,
+              }, '*');
+            }
+          }
+          </script>
+          <script type="module">
+            const originalConsoleError = console.error;
+            console.error = function(...args) {
+              originalConsoleError.apply(console, args);
+            
+              let errorString = '';
+            
+              for (let i = 0; i < args.length; i++) {
+                const arg = args[i];
+                if (arg instanceof Error) {
+                  errorString = arg.stack || `${arg.name}: ${arg.message}`;
+                  break;
+                }
+              }
+            
+              if (!errorString) {
+                errorString = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : String(arg)).join(' ');
+              }
+            
+              window.parent.postMessage({
+                type: 'horizons-console-error',
+                error: errorString
+              }, '*');
+            };
+            </script>
+            <script type="module">
+              const originalFetch = window.fetch;
+              
+              window.fetch = function(...args) {
+                const url = args[0] instanceof Request ? args[0].url : args[0];
+              
+                // Skip WebSocket URLs
+                if (url.startsWith('ws:') || url.startsWith('wss:')) {
+                  return originalFetch.apply(this, args);
+                }
+              
+                return originalFetch.apply(this, args)
+                  .then(async response => {
+                    const contentType = response.headers.get('Content-Type') || '';
+              
+                    // Exclude HTML document responses
+                    const isDocumentResponse =
+                      contentType.includes('text/html') ||
+                      contentType.includes('application/xhtml+xml');
+              
+                    if (!response.ok && !isDocumentResponse) {
+                        const responseClone = response.clone();
+                        const errorFromRes = await responseClone.text();
+                        const requestUrl = response.url;
+                        console.error(`Fetch error from ${requestUrl}: ${errorFromRes}`);
+                    }
+              
+                    return response;
+                  })
+                  .catch(error => {
+                    if (!url.match(/.html?$/i)) {
+                      console.error(error);
+                    }
+              
+                    throw error;
+                  });
+              };
+              </script>
+    </head>
+
+    <body>
+        <div id="root">
+          <div class="min-h-screen bg-white">
+            <div role="region" aria-label="Notifications (F8)" tabindex="-1" style="pointer-events: none;">
+              <ol tabindex="-1" class="fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]"></ol>
+            </div>
+
+            <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b">
+              <div class="container mx-auto px-4 py-2 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <a href="index.html"><img src="assests/Website_Logo.png" alt="Bottlr Studios Logo" class="h-16 w-auto object-contain"></a>
+                </div>
+                <div class="hidden md:flex items-center gap-8">
+                  <a href="#services" class="text-gray-600 hover:text-primary transition-colors">Services</a>
+                  <a href="#about" class="text-gray-600 hover:text-primary transition-colors">About</a>
+                  <a href="#contact" class="text-gray-600 hover:text-primary transition-colors">Contact</a>
+                  <a href="/get-started.html" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">Get Started</a>
+                </div>
+              </div>
+            </nav>
+
+            <section class="hero-gradient pt-32 pb-20">
+              <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center gap-12">
+                  <div class="flex-1 text-white" style="opacity: 1; transform: none;">
+                    <h1 class="text-5xl md:text-6xl font-bold mb-6 slide-up">Pure Bottled Perfection</h1>
+                    <p class="text-xl mb-8 text-gray-100 slide-up">Custom branded water bottles for hotels, restaurants, and events. Make your mark with every sip.</p>
+                    <div class="flex gap-4">
+                      <a href="/get-started.html" class="inline-flex items-center justify-center text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-11 rounded-md px-8 bg-white text-primary hover:bg-gray-100 slide-up zoom-hover">
+                        Get Started 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2 h-5 w-5">
+                          <path d="M5 12h14"></path>
+                          <path d="m12 5 7 7-7 7"></path>
+                        </svg>
+                      </a>
+                      <a href="#about" class="inline-flex items-center justify-center text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-white/10 hover:text-accent-foreground h-11 rounded-md px-8 border-white/30 text-white/70 hover:bg-white/20 slide-up zoom-hover">
+                        Learn More
+                      </a>
+                    </div>
+                  </div>
+
+                  <div class="flex-1" style="opacity: 1; transform: none;">
+                    <img alt="Custom branded water bottles" class="w-full rounded-lg shadow-2xl zoom-in" src="assests/Home Page Bottles.jpeg">
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="about" class="py-20 bg-gray-50">
+              <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto" style="opacity: 1; transform: none;">
+                <div class="text-center mb-12">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-12 w-12 text-primary mx-auto mb-4">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 16v-4"></path>
+                    <path d="M12 8h.01"></path>
+                  </svg>
+                  <h2 class="text-4xl font-bold mb-6">About Bottlr Studios</h2>
+                  <p class="text-xl text-gray-600 mb-8">A branch of VibeKraft Marketing Pvt Ltd, dedicated to revolutionizing branded water bottle solutions.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                  <div class="bg-white p-6 rounded-xl shadow-lg zoom-hover">
+                    <h3 class="text-xl font-bold mb-4">Our Mission</h3>
+                    <p class="text-gray-600">To provide innovative and sustainable branded water bottle solutions that help businesses make a lasting impression while promoting hydration and environmental responsibility.</p>
+                  </div>
+                  <div class="bg-white p-6 rounded-xl shadow-lg zoom-hover">
+                    <h3 class="text-xl font-bold mb-4">Our Vision</h3>
+                    <p class="text-gray-600">To become the leading provider of custom branded water bottles, setting new standards in quality, design, and environmental consciousness.</p>
+                  </div>
+                </div>
+                
+                <div class="mt-16">
+                  <h3 class="text-3xl font-bold text-center mb-12">Meet Our Co-founders</h3>
+                  <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center zoom-hover">
+                      <div class="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-12 w-12 text-primary">
+                          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                      </div>
+                      <h4 class="text-xl font-bold mb-2">Amarjeet Pattnaik</h4>
+                      <p class="text-gray-600">Co-founder &amp; CEO</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center zoom-hover">
+                      <div class="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-12 w-12 text-primary">
+                          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                      </div>
+                      <h4 class="text-xl font-bold mb-2">Swoyam Pattanaik</h4>
+                      <p class="text-gray-600">Co-founder &amp; COO</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center zoom-hover">
+                      <div class="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-12 w-12 text-primary">
+                          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                      </div>
+                      <h4 class="text-xl font-bold mb-2">Saswat Kumar Nayak</h4>
+                    <p class="text-gray-600">Co-founder &amp; CTO</p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-12 text-center">
+                <img alt="Team working on bottle designs" class="rounded-xl shadow-2xl mb-8 mx-auto" src="assests/Sample Bottles.png">
+                <p class="text-gray-600">With years of experience in marketing and branding, our team understands the power of making every touchpoint count. Our water bottles aren't just containers – they're marketing tools that keep your brand flowing.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="services" class="py-20">
+          <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12">Our Services</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+              <div class="p-6 rounded-xl border bg-white shadow-lg zoom-hover">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-12 w-12 text-secondary mb-4">
+                  <path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"></path>
+                  <path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"></path>
+                </svg>
+                <h3 class="text-xl font-bold mb-2">Custom Branding</h3>
+                <p class="text-gray-600">Premium water bottles with your brand's unique identity.</p>
+              </div><div class="p-6 rounded-xl border bg-white shadow-lg zoom-hover">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-12 w-12 text-secondary mb-4">
+                  <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path>
+                  <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path>
+                  <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path>
+                  <path d="M10 6h4"></path>
+                  <path d="M10 10h4"></path>
+                  <path d="M10 14h4"></path>
+                  <path d="M10 18h4"></path>
+                </svg>
+                <h3 class="text-xl font-bold mb-2">Corporate Solutions</h3>
+                <p class="text-gray-600">Bulk orders for hotels, restaurants, and businesses.</p>
+              </div>
+              <div class="p-6 rounded-xl border bg-white shadow-lg zoom-hover">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-12 w-12 text-secondary mb-4">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <h3 class="text-xl font-bold mb-2">Event Distribution</h3>
+                <p class="text-gray-600">Sponsored water bottles for events and gatherings.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="contact" class="py-20 bg-gray-50">
+          <div class="container mx-auto px-4">
+            <div class="max-w-2xl mx-auto text-center">
+              <h2 class="text-4xl font-bold mb-8">Get In Touch</h2>
+              <p class="text-gray-600 mb-8">Ready to elevate your brand with custom water bottles? Contact us today!</p>
+              <div class="flex flex-col gap-4">
+                <input type="email" placeholder="Enter your email" class="px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary">
+                <textarea placeholder="Your message" rows="4" class="px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                <button class="inline-flex items-center justify-center text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-11 rounded-md px-8 w-full">
+                  Send Message 
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <footer class="bg-primary text-white py-12">
+          <div class="container mx-auto px-4"><div class="grid md:grid-cols-3 gap-8">
+            <div>
+              <h3 class="text-xl font-bold mb-4">Bottlr Studios</h3>
+              <p class="text-gray-300">A branch of VibeKraft Marketing Pvt Ltd</p>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+              <ul class="space-y-2">
+                <li>
+                  <a href="#services" class="text-gray-300 hover:text-white">Services</a>
+                </li>
+                <li>
+                  <a href="#about" class="text-gray-300 hover:text-white">About</a>
+                </li>
+                <li>
+                  <a href="#contact" class="text-gray-300 hover:text-white">Contact</a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-4">Contact</h3>
+              <p class="text-gray-300">Email: info@bottlr.in<br>Phone: +91 8280730710</p>
+            </div>
+          </div>
+          <div class="border-t border-white/10 mt-8 pt-8 text-center">
+            <p class="text-gray-300">© 2025 Bottlr Studios. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+          </div>
+        </div>
+    </body>
+</html>

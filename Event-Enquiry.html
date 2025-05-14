@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Set character encoding -->
+    <meta charset="UTF-8">
+
+    <!-- Favicon (corrected path from 'assests' to 'assets') -->
+    <link rel="icon" type="image/svg+xml" href="/assets/Bottle.png">
+
+    <!-- Set viewport for responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO description -->
+    <meta name="description" content="Bottlr Studios - Custom branded water bottles for hotels, restaurants, and events">
+
+    <!-- Page title -->
+    <title>Bottlr Studios - Pure Bottled Perfection</title>
+
+    <!-- Link to bundled JavaScript module -->
+    <script type="module" crossorigin="" src="/assets/index-4963a71e.js"></script>
+
+    <!-- Link to external CSS (corrected path) -->
+    <link rel="stylesheet" href="assets/style.css">
+
+    <!-- SheetJS library for Excel generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+
+<body>
+    <div id="root">
+        <div class="min-h-screen bg-white">
+            <div class="container mx-auto px-4 py-20">
+
+                <!-- Back button -->
+                <a href="get-started.html" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 mb-8">
+                    <!-- Back arrow icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 h-4 w-4">
+                        <path d="m12 19-7-7 7-7"></path>
+                        <path d="M19 12H5"></path>
+                    </svg>
+                    Back
+                </a>
+
+                <!-- Event Enquiry Form -->
+                <div class="max-w-2xl mx-auto">
+                    <h1 class="text-4xl font-bold mb-8">Event Partnership Enquiry</h1>
+                    <form class="space-y-6" action="#" method="POST" id="event-form">
+
+                        <!-- Event Name Field -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2" for="event-name">Event Name</label>
+                            <input type="text" id="event-name" name="event_name" required class="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+
+                        <!-- Event Date Field -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2" for="event-date">Event Date</label>
+                            <input type="date" id="event-date" name="event_date" required class="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+
+                        <!-- Expected Attendance Field -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2" for="attendance">Expected Attendance</label>
+                            <input type="number" id="attendance" name="expected_attendance" required class="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+
+                        <!-- Event Location Field -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2" for="location">Event Location</label>
+                            <input type="text" id="location" name="event_location" required class="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+
+                        <!-- Contact Person Field -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2" for="contact">Contact Person</label>
+                            <input type="text" id="contact" name="contact_person" required class="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+
+                        <!-- Email Field -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2" for="email">Email</label>
+                            <input type="email" id="email" name="email" required class="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+
+                        <!-- Additional Info Field -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2" for="additional">Additional Information</label>
+                            <textarea id="additional" name="additional_info" rows="4" class="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="inline-flex items-center justify-center text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-11 rounded-md px-8 w-full">
+                            Submit Enquiry
+                        </button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script to handle form and export data -->
+    <script>
+        document.getElementById('event-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const data = [{
+                "Event Name": formData.get("event_name"),
+                "Event Date": formData.get("event_date"),
+                "Expected Attendance": formData.get("expected_attendance"),
+                "Event Location": formData.get("event_location"),
+                "Contact Person": formData.get("contact_person"),
+                "Email": formData.get("email"),
+                "Additional Information": formData.get("additional_info")
+            }];
+
+            // Convert form data to a worksheet
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Event Enquiry");
+
+            // Export to Excel
+            XLSX.writeFile(workbook, "event_enquiry.xlsx");
+        });
+    </script>
+</body>
+</html>
+    
